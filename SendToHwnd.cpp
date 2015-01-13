@@ -1,7 +1,7 @@
 struct hhb_vkey{
-	char* name;
-	uint8_t vkey;
-	char* description;
+	const char* name;
+	const uint8_t vkey;
+	const char* description;
 };
 const hhb_vkey hhb_vkey_list[] = {
 	{ "VK_LBUTTON", 0x01, "Left mouse button" },
@@ -88,7 +88,7 @@ const hhb_vkey hhb_vkey_list[] = {
 	{ "W key", 0x57, "W key" },
 	{ "X key", 0x58, "X key" },
 	{ "Y key", 0x59, "Y key" },
-	{ "Z key", 0x5A, "Z key" },
+	{ "Z key", 0x5A, "Z key" },//hmm, add the lowercase a-z as well?
 	{ "VK_LWIN", 0x5B, "Left Windows key (Natural keyboard)" },
 	{ "VK_RWIN", 0x5C, "Right Windows key (Natural keyboard)" },
 	{ "VK_APPS", 0x5D, "Applications key (Natural keyboard)" },
@@ -203,3 +203,56 @@ const hhb_vkey hhb_vkey_list[] = {
 	{ "VK_PA1", 0xFD, "PA1 key" },
 	{ "VK_OEM_CLEAR", 0xFE, "Clear key" }
 };
+
+void SendToHwnd(_In_ HWND hwnd,_In_ const std::string StringToSend){
+	assert(hwnd != 0);//todo: validate hwnd?
+	if (StringToSend.length() == 0)
+	{ return; }
+	//oookay, there's *probably* a *good* way to do this..
+	std::vector<uint8_t> vkeys;
+	uint32_t i = 0;
+	const uint32_t length = StringToSend.length();
+	//<parseString>
+	bool isEscaping = false;
+	for (i = 0; i < length; ++i){
+		if (!isEscaping && StringToSend.at(i) == '\\'){
+			isEscaping = true;
+			continue;
+		}
+		if (!isEscaping && StringToSend.at(i)=='{')
+		{
+			std::string tmpstr = "";
+			++i;
+			while (StringToSend.at(i) != '}'){
+				tmpstr += StringToSend.at(i);
+				++i;
+			}
+			++i;
+//			std::transform(tmpstr.begin(), tmpstr.end(), tmpstr.begin(), ::toupper);
+			bool found = false;
+			for (int ii = 0; ii < sizeof(hhb_vkey_list); ++ii){
+				if (strcmp(hhb_vkey_list[ii].name, tmpstr.c_str()) == 0)
+				{
+					found = true;
+					vkeys.push_back(hhb_vkey_list[ii].vkey);
+					break;
+				}
+			}
+			if (!found)
+			{
+				std::cerr << "Warning: unrecognized vkey code \"" << tmpstr << "\"" << std::endl;
+			}
+				continue;
+		}
+		vkeys.push_back(StringToSend.at(i));
+		continue;
+	}
+	//</parseString>
+	for (auto& vk : vkeys){
+		auto scan = MapVirtualKey(vk, 0);
+		auto lparam = 0x00000001 | (LPARAM)(scan << 16); //wtf? i have no clue.
+		PostMessage(hwnd, WM_KEYDOWN, vk, lparam);
+		PostMessage(hwnd, WM_KEYUP, vk, lparam);
+	}
+	return;
+}
