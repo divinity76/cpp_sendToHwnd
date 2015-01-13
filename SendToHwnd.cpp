@@ -10,7 +10,7 @@ const hhb_vkey hhb_vkey_list[] = {
 	{ "VK_MBUTTON", 0x04, "Middle mouse button (three-button mouse)" },
 	{ "VK_XBUTTON1", 0x05, "X1 mouse button" },
 	{ "VK_XBUTTON2", 0x06, "X2 mouse button" },
-	{ "-", 0x07, "Undefined" },
+//	{ "-", 0x07, "Undefined" },
 	{ "VK_BACK", 0x08, "BACKSPACE key" },
 	{ "VK_TAB", 0x09, "TAB key" },
 //	{ "-", 0x0A - 0B, "Reserved" },
