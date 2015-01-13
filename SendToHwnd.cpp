@@ -204,7 +204,7 @@ const hhb_vkey hhb_vkey_list[] = {
 	{ "VK_OEM_CLEAR", 0xFE, "Clear key" }
 };
 
-void SendToHwnd(_In_ HWND hwnd,_In_ const std::string StringToSend){
+void SendToHwnd(_In_ HWND hwnd, _In_opt_ const std::string StringToSend){
 	assert(hwnd != 0);//todo: validate hwnd?
 	if (StringToSend.length() == 0)
 	{ return; }
@@ -244,15 +244,16 @@ void SendToHwnd(_In_ HWND hwnd,_In_ const std::string StringToSend){
 			}
 				continue;
 		}
-		vkeys.push_back(StringToSend.at(i));
+		vkeys.push_back(VkKeyScan(StringToSend.at(i)));
 		continue;
 	}
 	//</parseString>
 	for (auto& vk : vkeys){
 		auto scan = MapVirtualKey(vk, 0);
 		auto lparam = 0x00000001 | (LPARAM)(scan << 16); //wtf? i have no clue.
+		//memset(&lparam, 0x00, 2);
 		PostMessage(hwnd, WM_KEYDOWN, vk, lparam);
-		PostMessage(hwnd, WM_KEYUP, vk, lparam);
+	//	PostMessage(hwnd, WM_KEYUP, vk, lparam);
 	}
 	return;
 }
