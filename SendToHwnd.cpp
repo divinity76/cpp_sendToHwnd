@@ -204,7 +204,7 @@ const hhb_vkey hhb_vkey_list[] = {
 	{ "VK_OEM_CLEAR", 0xFE, "Clear key" }
 };
 
-void SendToHwnd(_In_ HWND hwnd, _In_opt_ const std::string StringToSend){
+void SendToHwnd(_In_ HWND hwnd, _In_ const std::string StringToSend){
 	assert(hwnd != 0);//todo: validate hwnd?
 	if (StringToSend.length() == 0)
 	{ return; }
