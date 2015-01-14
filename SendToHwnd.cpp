@@ -244,6 +244,7 @@ void SendToHwnd(_In_ HWND hwnd, _In_opt_ const std::string StringToSend){
 			}
 				continue;
 		}
+		isEscaping=false;
 		vkeys.push_back(VkKeyScan(StringToSend.at(i)));
 		continue;
 	}
