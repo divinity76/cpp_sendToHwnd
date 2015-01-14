@@ -230,7 +230,7 @@ void SendToHwnd(_In_ HWND hwnd, _In_opt_ const std::string StringToSend){
 			++i;
 //			std::transform(tmpstr.begin(), tmpstr.end(), tmpstr.begin(), ::toupper);
 			bool found = false;
-			for (int ii = 0; ii < sizeof(hhb_vkey_list); ++ii){
+			for (int ii = 0; ii < sizeof(hhb_vkey_list)/sizeof(hhb_vkey); ++ii){
 				if (strcmp(hhb_vkey_list[ii].name, tmpstr.c_str()) == 0)
 				{
 					found = true;
